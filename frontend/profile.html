@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Profile</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="profile-container">
+    <img src="assets/images/profile.jpg" alt="Profile Photo" class="profile-img">
+
+    <h2 id="profileName">Tenant Name</h2>
+    <p><strong>Room:</strong> <span id="profileRoom">101</span></p>
+    <p><strong>Phone:</strong> <span id="profilePhone">9999999999</span></p>
+    <p><strong>Email:</strong> <span id="profileEmail">tenant@mail.com</span></p>
+
+    <a href="dashboard.html" class="btn">Back to Dashboard</a>
+  </div>
+<script>
+  document.getElementById("profileName").innerText = "Tenant User";
+  document.getElementById("profileRoom").innerText = "Room 101";
+  document.getElementById("profilePhone").innerText = "9876543210";
+  document.getElementById("profileEmail").innerText = "tenant@mail.com";
+</script>
+
+</body>
+</html>
