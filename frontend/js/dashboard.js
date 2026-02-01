@@ -6,7 +6,8 @@ title.innerText=user.r.toUpperCase()+" DASHBOARD";
 
 
 const admin=[['Rooms','rooms.html'],['Rent','rent.html'],['Complaints','complaints.html'],['Notices','notices.html']];
-const tenant=[['Rent','rent.html'],['Complaints','complaints.html'],['Notices','notices.html']];
+// Include Rooms for tenants so they can book rooms
+const tenant=[['Rooms','rooms.html'],['Rent','rent.html'],['Complaints','complaints.html'],['Notices','notices.html']];
 
 
 (user.r==='admin'?admin:tenant).forEach(i=>{

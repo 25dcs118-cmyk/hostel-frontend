@@ -5,18 +5,65 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<nav><h2>Complaints</h2></nav>
+<nav>
+  <div class="nav-left">
+    <h2>Complaints</h2>
+  </div>
+  <div class="navbar-hostel-info">
+    <p><strong>Premium Boys Hostel</strong> - Sector 5, Near Metro Station</p>
+  </div>
+  <button onclick="logout()">Back</button>
+</nav>
 
+<div class="hostel-card">
+  <h3>🏢 Hostel/PG Information</h3>
+  <p><strong>Name:</strong> Premium Boys Hostel</p>
+  <p><strong>Location:</strong> Sector 5, Near Metro Station, New Delhi</p>
+  <p><strong>Facilities:</strong> WiFi, Laundry, Mess, TV Room, Sports Area, 24/7 Security, AC Rooms, Hot Water</p>
+  <p><strong>Contact:</strong> +91-98765-43210</p>
+</div>
+
+<div class="hostel-images">
+  <div class="hostel-image-item">
+    <img src="assets/images/hostel1.jpg" alt="Hostel Main Building">
+  </div>
+  <div class="hostel-image-item">
+    <img src="assets/images/hostel2.jpg" alt="Hostel Room">
+  </div>
+  <div class="hostel-image-item">
+    <img src="assets/images/hostel3.jpg" alt="Hostel Common Area">
+  </div>
+</div>
 
 <div class="card">
-<textarea id="complaint" placeholder="Write complaint"></textarea>
-<button onclick="addComplaint()">Submit</button>
+</textarea>
+  <input id="tenantName" placeholder="Your name">
+  <textarea id="complaint" placeholder="Write complaint"></textarea>
+  <button onclick="addComplaint()">Submit</button>
 </div>
 
 
-<ul id="list"></ul>
+<div class="card">
+  <h3>Complaints</h3>
+  <ul id="complaintsList"></ul>
+</div>
 
 
+<script src="js/auth.js"></script>
 <script src="js/api.js"></script>
+<script>
+async function loadComplaints(){
+  const list = document.getElementById('complaintsList');
+  list.innerHTML='';
+  const items = await getAll('complaints');
+  items.forEach(c=>{
+    const li=document.createElement('li');
+    li.innerHTML = `<strong>${c.tenant}</strong>: ${c.text} <small style="color:#666">(${new Date(c.createdAt).toLocaleString()})</small>`;
+    list.appendChild(li);
+  });
+}
+
+window.addEventListener('load', loadComplaints);
+</script>
 </body>
 </html>

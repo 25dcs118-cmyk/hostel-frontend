@@ -1,0 +1,11 @@
+{
+  "rooms": [
+    {"id":1, "room":"101", "cap":2, "booked":false},
+    {"id":2, "room":"102", "cap":2, "booked":false},
+    {"id":3, "room":"103", "cap":1, "booked":false}
+  ],
+  "bookings": [],
+  "complaints": [],
+  "rents": [],
+  "notices": []
+}
