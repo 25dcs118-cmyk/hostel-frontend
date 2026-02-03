@@ -1,20 +1,180 @@
-*{box-sizing:border-box;font-family:Segoe UI}
-body{margin:0;background:#ffffff}
-.center{height:100vh;display:flex;align-items:center;justify-content:center}
-.login-container{height:100vh;display:flex;align-items:center;justify-content:center;gap:30px;padding:20px;flex-wrap:wrap;overflow-y:auto}
-.card{background:#fff;padding:20px;width:300px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.15);flex-shrink:0}
-input,textarea,select,button{width:100%;padding:10px;margin:8px 0}
-button{background:#4f46e5;color:#fff;border:none;border-radius:5px;cursor:pointer}
-nav{background:#111827;color:white;padding:15px;display:flex;justify-content:space-between}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;padding:20px}
-.box{background:white;padding:30px;text-align:center;border-radius:10px;text-decoration:none;color:black;box-shadow:0 5px 15px rgba(0,0,0,.1)}
-ul{list-style:none;padding:20px}
-li{background:white;margin:10px 0;padding:10px;border-radius:5px}
-.hint{font-size:12px;color:gray}
-/* ===== ASSETS ===== */
+/* ========================
+   GLOBAL DESIGN SYSTEM
+======================== */
 
-.nav-logo {
-  width: 36px;
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --bg: #f9fafb;
+  --text-dark: #111827;
+  --text-muted: #6b7280;
+  --white: #ffffff;
+  --radius: 12px;
+  --shadow-sm: 0 4px 10px rgba(0,0,0,0.08);
+  --shadow-md: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-dark);
+}
+
+/* ========================
+   TYPOGRAPHY
+======================== */
+
+h1, h2, h3 {
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 22px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+/* ========================
+   BUTTONS
+======================== */
+
+button, .btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+button:hover, .btn:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: #6b7280;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+/* ========================
+   INPUTS
+======================== */
+
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* ========================
+   CARD SYSTEM
+======================== */
+
+.card {
+  background: var(--white);
+  padding: 22px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ========================
+   LOGIN PAGE
+======================== */
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  gap: 30px;
+  padding: 30px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.info-card {
+  max-width: 320px;
+}
+
+.login-card {
+  width: 320px;
+  text-align: center;
+}
+
+.logo {
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.demo-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+/* ========================
+   IMAGE GALLERY
+======================== */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.gallery-card {
+  width: 300px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* ========================
+   NAVBAR
+======================== */
+
+nav {
+  background: #111827;
+  color: white;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .nav-left {
@@ -23,88 +183,53 @@ li{background:white;margin:10px 0;padding:10px;border-radius:5px}
   gap: 10px;
 }
 
-/* ===== HOSTEL DETAILS ===== */
-.hostel-card {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,.1);
-  margin: 20px;
-  margin-top: 0;
-  flex-shrink: 0;
-}
-
-.hostel-card h3 {
-  margin-top: 0;
-  color: #111827;
-  border-bottom: 2px solid #4f46e5;
-  padding-bottom: 10px;
-}
-
-.hostel-card p {
-  margin: 8px 0;
-  color: #374151;
-  line-height: 1.6;
-}
-
-.hostel-card strong {
-  color: #111827;
-}
-
-.btn-secondary {
-  background: #6b7280;
-  margin-top: 15px;
-}
-
-.btn-secondary:hover {
-  background: #4b5563;
+.nav-logo {
+  width: 36px;
 }
 
 .navbar-hostel-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-left: auto;
   font-size: 14px;
-}
-
-.navbar-hostel-info p {
-  margin: 0;
   color: #e5e7eb;
 }
 
-.navbar-hostel-info strong {
-  color: #4f46e5;
-}
+/* ========================
+   DASHBOARD GRID
+======================== */
 
-/* ===== HOSTEL IMAGES ===== */
-.hostel-images {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 20px;
-  margin: 20px;
+  padding: 20px;
 }
 
-.hostel-image-item {
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,.1);
-}
-
-.hostel-image-item img {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-  display: block;
-}
-.profile-container {
-  max-width: 350px;
-  margin: 50px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
+.box {
+  background: var(--white);
+  padding: 30px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: var(--text-dark);
+  transition: transform 0.2s ease;
+}
+
+.box:hover {
+  transform: translateY(-4px);
+}
+
+/* ========================
+   PROFILE
+======================== */
+
+.profile-container {
+  max-width: 360px;
+  margin: 60px auto;
+  background: var(--white);
+  padding: 30px;
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-md);
 }
 
 .profile-img {
@@ -117,15 +242,5 @@ li{background:white;margin:10px 0;padding:10px;border-radius:5px}
 
 .profile-container p {
   margin: 8px 0;
+  color: var(--text-muted);
 }
-
-.btn {
-  display: inline-block;
-  margin-top: 15px;
-  padding: 10px 20px;
-  background: #4CAF50;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-}
-

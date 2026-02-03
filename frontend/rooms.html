@@ -1,100 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Rooms</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Rooms</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+
 <nav>
   <div class="nav-left">
     <h2>Rooms</h2>
   </div>
+
   <div class="navbar-hostel-info">
-    <p><strong>Premium Boys Hostel</strong> - Sector 5, Near Metro Station</p>
+    <p><strong>Premium Boys Hostel</strong></p>
   </div>
-  <button onclick="logout()">Back</button>
+
+  <button class="btn-secondary" onclick="goDashboard()">Back</button>
 </nav>
 
-<div class="hostel-card">
-  <h3>🏢 Hostel/PG Information</h3>
-  <p><strong>Name:</strong> Premium Boys Hostel</p>
-  <p><strong>Location:</strong> Sector 5, Near Metro Station, New Delhi</p>
-  <p><strong>Facilities:</strong> WiFi, Laundry, Mess, TV Room, Sports Area, 24/7 Security, AC Rooms, Hot Water</p>
-  <p><strong>Contact:</strong> +91-98765-43210</p>
-</div>
+<section class="grid">
 
-<div class="hostel-images">
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel1.jpg" alt="Hostel Main Building">
+  <!-- ADMIN: ADD ROOM -->
+  <div class="card" id="adminRoomForm">
+    <h3>➕ Add Room</h3>
+    <input id="roomNumber" placeholder="Room Number">
+    <input id="capacity" placeholder="Capacity">
+    <button onclick="addRoom()">Add Room</button>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel2.jpg" alt="Hostel Room">
+
+  <!-- ROOMS LIST -->
+  <div class="card">
+    <h3>🏠 Available Rooms</h3>
+    <ul id="roomsList"></ul>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel3.jpg" alt="Hostel Common Area">
+
+  <!-- TENANT: BOOK ROOM -->
+  <div class="card" id="bookingCard">
+    <h3>📌 Book Room</h3>
+    <select id="selectRoom"></select>
+    <button onclick="bookRoom()">Book</button>
   </div>
-</div>
 
-<div id="adminRoomForm" class="card">
-  <h3>Admin: Add Room</h3>
-  <input id="room" placeholder="Room Number">
-  <input id="capacity" placeholder="Capacity">
-  <button onclick="addRoom()">Add Room</button>
-</div>
-
-
-<ul id="list"></ul>
-
-<div class="card">
-  <h3>Book a Room</h3>
-  <select id="selectRoom"></select>
-  <input id="bookTenant" placeholder="Your name">
-  <button onclick="bookRoom()">Book Room</button>
-</div>
-
-<div class="card">
-  <h3>Bookings</h3>
-  <ul id="bookingsList"></ul>
-</div>
-
+</section>
 
 <script src="js/auth.js"></script>
 <script src="js/api.js"></script>
+
 <script>
-async function loadRoomsForBooking(){
-  const sel=document.getElementById('selectRoom');
-  sel.innerHTML='';
-  const rooms = await getAll('rooms');
-  rooms.forEach(r=>{
-    const opt=document.createElement('option');
-    opt.value = r.id || r.room;
-    opt.innerText = r.room + (r.booked? ' (booked)':'');
-    sel.appendChild(opt);
-  });
-}
+  requireAuth();
+  const session = JSON.parse(localStorage.getItem("session"));
 
-async function loadBookings(){
-  const list=document.getElementById('bookingsList');
-  list.innerHTML='';
-  const bookings = await getAll('bookings');
-  bookings.forEach(b=>{
-    const li=document.createElement('li');
-    li.innerText = `${b.tenant} → Room ${b.room} (${new Date(b.createdAt).toLocaleString()})`;
-    list.appendChild(li);
-  });
-}
+  function goDashboard() {
+    window.location.replace("dashboard.html");
+  }
 
-window.addEventListener('load',()=>{ loadRoomsForBooking(); loadBookings();
-  // Hide admin add-room form for non-admin users
-  try{
-    const user = JSON.parse(localStorage.getItem('user')||'null');
-    const adminForm = document.getElementById('adminRoomForm');
-    if(adminForm){
-      if(!user || user.r!=='admin') adminForm.style.display='none';
-      else adminForm.style.display='block';
-    }
-  }catch(e){/*ignore*/}
-});
+  history.pushState(null, null, location.href);
+  window.onpopstate = () => goDashboard();
+
+  // Role-based UI
+  if (session.role !== "admin") {
+    document.getElementById("adminRoomForm").style.display = "none";
+  }
+
+  async function loadRooms() {
+    const rooms = await getAll("rooms");
+    const list = document.getElementById("roomsList");
+    const select = document.getElementById("selectRoom");
+
+    list.innerHTML = "";
+    select.innerHTML = "";
+
+    rooms.forEach(r => {
+      const li = document.createElement("li");
+      li.innerText = `Room ${r.number} | Capacity: ${r.capacity} | ${r.booked ? "Booked" : "Available"}`;
+      list.appendChild(li);
+
+      if (!r.booked) {
+        const opt = document.createElement("option");
+        opt.value = r._id;
+        opt.innerText = `Room ${r.number}`;
+        select.appendChild(opt);
+      }
+    });
+  }
+
+  window.onload = loadRooms;
 </script>
+
 </body>
 </html>

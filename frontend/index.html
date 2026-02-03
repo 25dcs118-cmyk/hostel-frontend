@@ -1,48 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Login</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Hostel Management | Login</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="login-container">
 
-<div class="hostel-card" style="width:300px;">
-  <h3>🏢 Hostel/PG Details</h3>
-  <p><strong>Name:</strong> Premium Boys Hostel</p>
-  <p><strong>Location:</strong> Sector 5, Near Metro Station, New Delhi</p>
-  <p><strong>Facilities:</strong> WiFi, Laundry, Mess, TV Room, Sports Area, 24/7 Security, AC Rooms, Hot Water</p>
-  <p><strong>Phone:</strong> +91-98765-43210</p>
-</div>
-
-<div class="card">
-    <img src="assets/images/logo.png" class="logo" alt="App Logo">
-
-<h2>Login</h2>
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
-<select id="role">
-<option value="admin">Admin</option>
-<option value="tenant">Tenant</option>
-</select>
-<button onclick="login()">Login</button>
-<p class="hint">admin/admin123 | tenant/tenant123</p>
-</div>
-
-<div class="hostel-images" style="display:flex;flex-direction:column;gap:15px;width:300px;">
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel.jpg" alt="Hostel Main Building" class="hostel-img">
-
+  <!-- Hostel Details -->
+  <div class="info-card">
+    <h3>🏢 Hostel / PG Details</h3>
+    <p><strong>Name:</strong> Premium Boys Hostel</p>
+    <p><strong>Location:</strong> Sector 5, Near Metro Station, New Delhi</p>
+    <p><strong>Facilities:</strong> WiFi, Laundry, Mess, TV Room, Sports Area, 24/7 Security, AC Rooms, Hot Water</p>
+    <p><strong>Contact:</strong> +91-98765-43210</p>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/Hostelroom.jpg" alt="Hostel Room">
-  </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostelcommonarea.jpg" alt="Hostel Common Area">
-  </div>
-</div>
 
+  <!-- Login Card -->
+  <div class="login-card">
+    <img src="assets/images/logo.png" alt="Hostel Logo" class="logo">
 
-<script src="js/auth.js"></script>
+    <h2>Login</h2>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" type="text" placeholder="Enter username" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="Enter password" required>
+    </div>
+
+    <div class="form-group">
+      <label for="role">Login As</label>
+      <select id="role">
+        <option value="admin">Admin</option>
+        <option value="tenant">Tenant</option>
+      </select>
+    </div>
+
+    <button class="login-btn" onclick="login()">Login</button>
+
+    <p class="demo-hint">Demo: admin / admin123 · tenant / tenant123</p>
+  </div>
+
+  <!-- Hostel Gallery -->
+  <div class="gallery">
+    <div class="gallery-card">
+      <img src="assets/images/hostel.jpg" alt="Hostel Building">
+    </div>
+    <div class="gallery-card">
+      <img src="assets/images/Hostelroom.jpg" alt="Hostel Room">
+    </div>
+    <div class="gallery-card">
+      <img src="assets/images/hostelcommonarea.jpg" alt="Common Area">
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
 </body>
 </html>

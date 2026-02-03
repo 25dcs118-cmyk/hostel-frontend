@@ -1,69 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Complaints</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Complaints</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+
 <nav>
-  <div class="nav-left">
-    <h2>Complaints</h2>
-  </div>
-  <div class="navbar-hostel-info">
-    <p><strong>Premium Boys Hostel</strong> - Sector 5, Near Metro Station</p>
-  </div>
-  <button onclick="logout()">Back</button>
+  <h2>Complaints</h2>
+  <button class="btn-secondary" onclick="goDashboard()">Back</button>
 </nav>
 
-<div class="hostel-card">
-  <h3>🏢 Hostel/PG Information</h3>
-  <p><strong>Name:</strong> Premium Boys Hostel</p>
-  <p><strong>Location:</strong> Sector 5, Near Metro Station, New Delhi</p>
-  <p><strong>Facilities:</strong> WiFi, Laundry, Mess, TV Room, Sports Area, 24/7 Security, AC Rooms, Hot Water</p>
-  <p><strong>Contact:</strong> +91-98765-43210</p>
-</div>
+<section class="grid">
 
-<div class="hostel-images">
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel1.jpg" alt="Hostel Main Building">
+  <!-- TENANT: ADD COMPLAINT -->
+  <div class="card" id="tenantComplaintForm">
+    <h3>📝 Raise Complaint</h3>
+    <input id="subject" placeholder="Subject">
+    <textarea id="description" placeholder="Describe your issue..."></textarea>
+    <button onclick="addComplaint()">Submit</button>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel2.jpg" alt="Hostel Room">
+
+  <!-- COMPLAINTS LIST -->
+  <div class="card">
+    <h3>📋 Complaints</h3>
+    <ul id="complaintList"></ul>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel3.jpg" alt="Hostel Common Area">
-  </div>
-</div>
 
-<div class="card">
-</textarea>
-  <input id="tenantName" placeholder="Your name">
-  <textarea id="complaint" placeholder="Write complaint"></textarea>
-  <button onclick="addComplaint()">Submit</button>
-</div>
-
-
-<div class="card">
-  <h3>Complaints</h3>
-  <ul id="complaintsList"></ul>
-</div>
-
+</section>
 
 <script src="js/auth.js"></script>
 <script src="js/api.js"></script>
-<script>
-async function loadComplaints(){
-  const list = document.getElementById('complaintsList');
-  list.innerHTML='';
-  const items = await getAll('complaints');
-  items.forEach(c=>{
-    const li=document.createElement('li');
-    li.innerHTML = `<strong>${c.tenant}</strong>: ${c.text} <small style="color:#666">(${new Date(c.createdAt).toLocaleString()})</small>`;
-    list.appendChild(li);
-  });
-}
 
-window.addEventListener('load', loadComplaints);
+<script>
+  requireAuth();
+  const session = JSON.parse(localStorage.getItem("session"));
+
+  function goDashboard() {
+    window.location.replace("dashboard.html");
+  }
+
+  history.pushState(null, null, location.href);
+  window.onpopstate = () => goDashboard();
+
+  // Role-based UI
+  if (session.role !== "tenant") {
+    document.getElementById("tenantComplaintForm").style.display = "none";
+  }
+
+  async function loadComplaints() {
+    const complaints = await getAll("complaints");
+    const list = document.getElementById("complaintList");
+    list.innerHTML = "";
+
+    complaints.forEach(c => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${c.subject}</strong><br>
+        ${c.description}<br>
+        <small>Status: ${c.status || "Pending"}</small>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  window.onload = loadComplaints;
 </script>
+
 </body>
 </html>

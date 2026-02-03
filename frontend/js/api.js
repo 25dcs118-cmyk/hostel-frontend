@@ -1,97 +1,150 @@
-const API_ROOT = 'http://localhost:4000/api';
+// ======================
+// API CONFIG
+// ======================
 
-async function apiFetch(path, options){
-	try{
-		const res = await fetch(API_ROOT + path, options);
-		if(!res.ok) throw new Error('Network response was not ok');
-		return await res.json();
-	}catch(e){
-		// fallback to localStorage based behaviour
-		return null;
-	}
+const BASE_URL = "http://localhost:5000/api";
+
+// Get auth token (future-proof)
+function getToken() {
+  const session = JSON.parse(localStorage.getItem("session"));
+  return session ? session.token : null;
 }
 
-async function getAll(key){
-	const map = {
-		rooms: '/rooms',
-		bookings: '/bookings',
-		complaints: '/complaints',
-		rents: '/rents',
-		notices: '/notices'
-	};
-	const data = await apiFetch(map[key]);
-	if(data!==null) return data;
-	return JSON.parse(localStorage.getItem(key)||'[]');
+// Common headers
+function getHeaders() {
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  const token = getToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  return headers;
 }
 
-async function addRoom(){
-	const payload = {room: room.value, cap: capacity.value};
-	const res = await apiFetch('/rooms',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-	if(res) render('rooms');
-	else{
-		const arr=JSON.parse(localStorage.getItem('rooms')||'[]'); arr.push(payload); localStorage.setItem('rooms',JSON.stringify(arr)); render('rooms');
-	}
+// ======================
+// GENERIC API METHODS
+// ======================
+
+async function getAll(resource) {
+  try {
+    const res = await fetch(`${BASE_URL}/${resource}`, {
+      headers: getHeaders()
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch data");
+
+    return await res.json();
+  } catch (err) {
+    alert(err.message);
+    return [];
+  }
 }
 
-async function addRent(){
-	const payload = {tenant: tenant.value, amount: amount.value};
-	const res = await apiFetch('/rents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-	if(res) render('rents');
-	else{
-		const arr=JSON.parse(localStorage.getItem('rents')||'[]'); arr.push(payload); localStorage.setItem('rents',JSON.stringify(arr)); render('rents');
-	}
+async function create(resource, data) {
+  try {
+    const res = await fetch(`${BASE_URL}/${resource}`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error("Failed to create");
+
+    return await res.json();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-async function addComplaint(){
-	const payload = {tenant: (document.getElementById('tenantName')?document.getElementById('tenantName').value:'Guest'), text: complaint.value};
-	const res = await apiFetch('/complaints',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-	if(res) render('complaints');
-	else{
-		const arr=JSON.parse(localStorage.getItem('complaints')||'[]'); arr.push(payload); localStorage.setItem('complaints',JSON.stringify(arr)); render('complaints');
-	}
+async function update(resource, id, data) {
+  try {
+    const res = await fetch(`${BASE_URL}/${resource}/${id}`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error("Update failed");
+
+    return await res.json();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-async function addNotice(){
-	const payload = {text: notice.value};
-	const res = await apiFetch('/notices',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-	if(res) render('notices');
-	else{
-		const arr=JSON.parse(localStorage.getItem('notices')||'[]'); arr.push(payload); localStorage.setItem('notices',JSON.stringify(arr)); render('notices');
-	}
+async function remove(resource, id) {
+  try {
+    const res = await fetch(`${BASE_URL}/${resource}/${id}`, {
+      method: "DELETE",
+      headers: getHeaders()
+    });
+
+    if (!res.ok) throw new Error("Delete failed");
+
+    return await res.json();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-async function bookRoom(){
-	const roomId = document.getElementById('selectRoom').value;
-	const tenantName = document.getElementById('bookTenant').value;
-	const payload = {roomId, tenant: tenantName, from: new Date().toISOString(), to: ''};
-	const res = await apiFetch('/bookings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-	if(res) alert('Room booked successfully');
-	else{
-		// local fallback mark room booked
-		const rooms = JSON.parse(localStorage.getItem('rooms')||'[]');
-		const r = rooms.find(r=>r.id==roomId||r.room==roomId);
-		if(r) r.booked = true;
-		localStorage.setItem('rooms',JSON.stringify(rooms));
-		alert('Room booked (local fallback)');
-	}
-	render('rooms');
+// ======================
+// DOMAIN HELPERS
+// ======================
+
+// ROOMS
+async function addRoom() {
+  const number = document.getElementById("roomNumber").value;
+  const capacity = document.getElementById("capacity").value;
+
+  if (!number || !capacity) return alert("Fill all fields");
+
+  await create("rooms", { number, capacity });
+  location.reload();
 }
 
-async function render(key){
-	const l=document.getElementById('list');
-	if(!l) return;
-	l.innerHTML='';
-	const items = await getAll(key);
-	items.forEach(i=>{
-		const li=document.createElement('li');
-		li.innerText=typeof i==='object'?JSON.stringify(i):i;
-		l.appendChild(li);
-	});
+async function bookRoom() {
+  const roomId = document.getElementById("selectRoom").value;
+  if (!roomId) return alert("Select a room");
+
+  await create("bookings", { roomId });
+  alert("Room booked successfully");
+  location.reload();
 }
 
-window.onload=()=>{
-	if(document.getElementById('room')) render('rooms');
-	if(document.getElementById('tenant')) render('rents');
-	if(document.getElementById('complaint')) render('complaints');
-	if(document.getElementById('notice')) render('notices');
+// RENT
+async function addRent() {
+  const room = document.getElementById("room").value;
+  const amount = document.getElementById("amount").value;
+  const month = document.getElementById("month").value;
+
+  if (!room || !amount || !month) return alert("Fill all fields");
+
+  await create("rent", { room, amount, month });
+  location.reload();
+}
+
+// COMPLAINTS
+async function addComplaint() {
+  const subject = document.getElementById("subject").value;
+  const description = document.getElementById("description").value;
+
+  if (!subject || !description) return alert("Fill all fields");
+
+  await create("complaints", { subject, description });
+  alert("Complaint submitted");
+  location.reload();
+}
+
+// NOTICES
+async function addNotice() {
+  const title = document.getElementById("title").value;
+  const content = document.getElementById("content").value;
+
+  if (!title || !content) return alert("Fill all fields");
+
+  await create("notices", { title, content });
+  location.reload();
 }

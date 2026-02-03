@@ -1,17 +1,48 @@
-const user=JSON.parse(localStorage.getItem('user'));
-if(!user) location.href='index.html';
+// ======================
+// DASHBOARD LOGIC
+// ======================
 
+// Auth guard (extra safety)
+const session = JSON.parse(localStorage.getItem("session"));
+if (!session) {
+  window.location.replace("index.html");
+}
 
-title.innerText=user.r.toUpperCase()+" DASHBOARD";
+// Set dashboard title
+const titleEl = document.getElementById("title");
+titleEl.innerText = session.role.toUpperCase() + " DASHBOARD";
 
+// Menu configuration
+const menus = {
+  admin: [
+    { name: "Rooms", link: "rooms.html", icon: "🏠" },
+    { name: "Rent", link: "rent.html", icon: "💰" },
+    { name: "Complaints", link: "complaints.html", icon: "🛠️" },
+    { name: "Notices", link: "notices.html", icon: "📢" }
+  ],
+  tenant: [
+    { name: "Rooms", link: "rooms.html", icon: "🏠" },
+    { name: "Rent", link: "rent.html", icon: "💰" },
+    { name: "Complaints", link: "complaints.html", icon: "🛠️" },
+    { name: "Notices", link: "notices.html", icon: "📢" }
+  ]
+};
 
-const admin=[['Rooms','rooms.html'],['Rent','rent.html'],['Complaints','complaints.html'],['Notices','notices.html']];
-// Include Rooms for tenants so they can book rooms
-const tenant=[['Rooms','rooms.html'],['Rent','rent.html'],['Complaints','complaints.html'],['Notices','notices.html']];
-
-
-(user.r==='admin'?admin:tenant).forEach(i=>{
-const a=document.createElement('a');
-a.className='box';a.href=i[1];a.innerText=i[0];
-menu.appendChild(a);
+// Render menu
+const menuContainer = document.getElementById("menu");
+menus[session.role].forEach(item => {
+  const card = document.createElement("a");
+  card.className = "box";
+  card.href = item.link;
+  card.innerHTML = `
+    <div style="font-size:32px">${item.icon}</div>
+    <div style="margin-top:10px;font-weight:600">${item.name}</div>
+  `;
+  menuContainer.appendChild(card);
 });
+
+// Prevent browser back navigation
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+  window.location.replace("dashboard.html");
+};

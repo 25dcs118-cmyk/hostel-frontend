@@ -1,50 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Notices</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Notices</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+
 <nav>
-  <div class="nav-left">
-    <h2>Notices</h2>
-  </div>
-  <div class="navbar-hostel-info">
-    <p><strong>Premium Boys Hostel</strong> - Sector 5, Near Metro Station</p>
-  </div>
-  <button onclick="logout()">Back</button>
+  <h2>Notice Board</h2>
+  <button class="btn-secondary" onclick="goDashboard()">Back</button>
 </nav>
 
-<div class="hostel-card">
-  <h3>🏢 Hostel/PG Information</h3>
-  <p><strong>Name:</strong> Premium Boys Hostel</p>
-  <p><strong>Location:</strong> Sector 5, Near Metro Station, New Delhi</p>
-  <p><strong>Facilities:</strong> WiFi, Laundry, Mess, TV Room, Sports Area, 24/7 Security, AC Rooms, Hot Water</p>
-  <p><strong>Contact:</strong> +91-98765-43210</p>
-</div>
+<section class="grid">
 
-<div class="hostel-images">
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel1.jpg" alt="Hostel Main Building">
+  <!-- ADMIN: ADD NOTICE -->
+  <div class="card" id="adminNoticeForm">
+    <h3>📢 Post Notice</h3>
+    <input id="title" placeholder="Title">
+    <textarea id="content" placeholder="Notice content..."></textarea>
+    <button onclick="addNotice()">Post</button>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel2.jpg" alt="Hostel Room">
+
+  <!-- NOTICES LIST -->
+  <div class="card">
+    <h3>📄 Notices</h3>
+    <ul id="noticeList"></ul>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel3.jpg" alt="Hostel Common Area">
-  </div>
-</div>
 
-<div class="card">
-<textarea id="notice" placeholder="New notice"></textarea>
-<button onclick="addNotice()">Post</button>
-</div>
-
-
-<ul id="list"></ul>
-
+</section>
 
 <script src="js/auth.js"></script>
 <script src="js/api.js"></script>
+
+<script>
+  requireAuth();
+  const session = JSON.parse(localStorage.getItem("session"));
+
+  function goDashboard() {
+    window.location.replace("dashboard.html");
+  }
+
+  history.pushState(null, null, location.href);
+  window.onpopstate = () => goDashboard();
+
+  // Role-based UI
+  if (session.role !== "admin") {
+    document.getElementById("adminNoticeForm").style.display = "none";
+  }
+
+  async function loadNotices() {
+    const notices = await getAll("notices");
+    const list = document.getElementById("noticeList");
+    list.innerHTML = "";
+
+    notices.forEach(n => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${n.title}</strong><br>
+        ${n.content}<br>
+        <small>${new Date(n.createdAt || Date.now()).toLocaleString()}</small>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  window.onload = loadNotices;
+</script>
+
 </body>
 </html>

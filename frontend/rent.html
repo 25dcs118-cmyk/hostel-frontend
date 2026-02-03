@@ -1,75 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Rent</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Rent</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+
 <nav>
-  <div class="nav-left">
-    <h2>Rent</h2>
-  </div>
-  <div class="navbar-hostel-info">
-    <p><strong>Premium Boys Hostel</strong> - Sector 5, Near Metro Station</p>
-  </div>
-  <button onclick="logout()">Back</button>
+  <h2>Rent Management</h2>
+  <button class="btn-secondary" onclick="goDashboard()">Back</button>
 </nav>
 
-<div class="hostel-card">
-  <h3>🏢 Hostel/PG Information</h3>
-  <p><strong>Name:</strong> Premium Boys Hostel</p>
-  <p><strong>Location:</strong> Sector 5, Near Metro Station, New Delhi</p>
-  <p><strong>Facilities:</strong> WiFi, Laundry, Mess, TV Room, Sports Area, 24/7 Security, AC Rooms, Hot Water</p>
-  <p><strong>Contact:</strong> +91-98765-43210</p>
-</div>
+<section class="grid">
 
-<div class="hostel-images">
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel1.jpg" alt="Hostel Main Building">
+  <!-- ADMIN: ADD RENT -->
+  <div class="card" id="adminRentForm">
+    <h3>➕ Add Rent</h3>
+    <input id="room" placeholder="Room Number">
+    <input id="amount" placeholder="Amount">
+    <input id="month" placeholder="Month (Jan 2026)">
+    <button onclick="addRent()">Add</button>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel2.jpg" alt="Hostel Room">
+
+  <!-- RENT LIST -->
+  <div class="card">
+    <h3>💰 Rent Records</h3>
+    <ul id="rentList"></ul>
   </div>
-  <div class="hostel-image-item">
-    <img src="assets/images/hostel3.jpg" alt="Hostel Common Area">
-  </div>
-</div>
 
-<div class="card">
-</div>
-
-<div class="card">
-  <input id="tenant" placeholder="Tenant Name">
-  <input id="amount" placeholder="Amount">
-  <button onclick="addRent()">Pay Rent</button>
-</div>
-
-
-<div class="card">
-  <h3>Payments</h3>
-  <ul id="paymentsList"></ul>
-</div>
-</div>
-
-
-<ul id="list"></ul>
-
+</section>
 
 <script src="js/auth.js"></script>
 <script src="js/api.js"></script>
-<script>
-async function loadPayments(){
-  const list=document.getElementById('paymentsList');
-  list.innerHTML='';
-  const payments = await getAll('rents');
-  payments.forEach(p=>{
-    const li=document.createElement('li');
-    li.innerText = `${p.tenant} paid ${p.amount} (${new Date(p.createdAt).toLocaleString()})`;
-    list.appendChild(li);
-  });
-}
 
-window.addEventListener('load', loadPayments);
+<script>
+  requireAuth();
+  const session = JSON.parse(localStorage.getItem("session"));
+
+  function goDashboard() {
+    window.location.replace("dashboard.html");
+  }
+
+  history.pushState(null, null, location.href);
+  window.onpopstate = () => goDashboard();
+
+  if (session.role !== "admin") {
+    document.getElementById("adminRentForm").style.display = "none";
+  }
+
+  async function loadRent() {
+    const rents = await getAll("rent");
+    const list = document.getElementById("rentList");
+    list.innerHTML = "";
+
+    rents.forEach(r => {
+      const li = document.createElement("li");
+      li.innerText = `Room ${r.room} | ₹${r.amount} | ${r.month}`;
+      list.appendChild(li);
+    });
+  }
+
+  window.onload = loadRent;
 </script>
+
 </body>
 </html>

@@ -5,24 +5,58 @@
   <title>My Profile</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
   <div class="profile-container">
     <img src="assets/images/profile.jpg" alt="Profile Photo" class="profile-img">
 
-    <h2 id="profileName">Tenant Name</h2>
-    <p><strong>Room:</strong> <span id="profileRoom">101</span></p>
-    <p><strong>Phone:</strong> <span id="profilePhone">9999999999</span></p>
-    <p><strong>Email:</strong> <span id="profileEmail">tenant@mail.com</span></p>
+    <h2 id="profileName">User</h2>
 
-    <a href="dashboard.html" class="btn">Back to Dashboard</a>
+    <p><strong>Role:</strong> <span id="profileRole"></span></p>
+    <p><strong>Room:</strong> <span id="profileRoom">Not Assigned</span></p>
+    <p><strong>Phone:</strong> <span id="profilePhone">—</span></p>
+    <p><strong>Email:</strong> <span id="profileEmail">—</span></p>
+
+    <button class="btn-secondary" onclick="goDashboard()">Back to Dashboard</button>
   </div>
-<script>
-  document.getElementById("profileName").innerText = "Tenant User";
-  document.getElementById("profileRoom").innerText = "Room 101";
-  document.getElementById("profilePhone").innerText = "9876543210";
-  document.getElementById("profileEmail").innerText = "tenant@mail.com";
-</script>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Auth guard
+    requireAuth();
+
+    const session = JSON.parse(localStorage.getItem("session"));
+
+    // Populate profile
+    document.getElementById("profileName").innerText =
+      session.username.charAt(0).toUpperCase() + session.username.slice(1);
+
+    document.getElementById("profileRole").innerText =
+      session.role.toUpperCase();
+
+    // Demo data (replace with MongoDB later)
+    if (session.role === "tenant") {
+      document.getElementById("profileRoom").innerText = "Room 101";
+      document.getElementById("profilePhone").innerText = "9876543210";
+      document.getElementById("profileEmail").innerText = "tenant@mail.com";
+    } else {
+      document.getElementById("profileRoom").innerText = "—";
+      document.getElementById("profilePhone").innerText = "+91 98765 43210";
+      document.getElementById("profileEmail").innerText = "admin@hostel.com";
+    }
+
+    // Force dashboard navigation
+    function goDashboard() {
+      window.location.replace("dashboard.html");
+    }
+
+    // Block browser back button
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+      window.location.replace("dashboard.html");
+    };
+  </script>
 
 </body>
 </html>

@@ -1,53 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Dashboard</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-
+<!-- NAVBAR -->
 <nav>
   <div class="nav-left">
     <img src="assets/images/logo.png" class="nav-logo">
-    <h2 id="title"></h2>
+    <h2 id="title">Dashboard</h2>
   </div>
+
   <div class="navbar-hostel-info">
-    <p><strong>Premium Boys Hostel</strong> - Sector 5, Near Metro Station</p>
+    <p><strong>Premium Boys Hostel</strong> – Sector 5, Near Metro Station</p>
   </div>
+
   <button onclick="logout()">Logout</button>
 </nav>
 
-<div class="hostel-card">
-  <h3>🏢 Hostel/PG Information</h3>
-  <p><strong>Name:</strong> Premium Boys Hostel</p>
-  <p><strong>Location:</strong> Sector 5, Near Metro Station, New Delhi</p>
-  <p><strong>Facilities:</strong> WiFi, Laundry, Mess, TV Room, Sports Area, 24/7 Security, AC Rooms, Hot Water</p>
-  <p><strong>Contact:</strong> +91-98765-43210</p>
-</div>
-<div class="card">
-  <h3>My Profile</h3>
-  <a href="profile.html">View Profile</a>
-</div>
+<!-- DASHBOARD CONTENT -->
+<section class="grid">
 
+  <!-- HOSTEL INFO -->
+  <div class="card">
+    <h3>🏢 Hostel Information</h3>
+    <p><strong>Name:</strong> Premium Boys Hostel</p>
+    <p><strong>Location:</strong> Sector 5, Near Metro Station</p>
+    <p><strong>Facilities:</strong> WiFi, Laundry, Mess, AC Rooms</p>
+    <p><strong>Contact:</strong> +91-98765-43210</p>
+  </div>
 
-<div class="hostel-images">
+  <!-- PROFILE -->
+  <div class="card">
+    <h3>👤 My Profile</h3>
+    <p>View and update your profile details.</p>
+    <button class="btn-secondary" onclick="location.href='profile.html'">
+      View Profile
+    </button>
+  </div>
+
+</section>
+
+<!-- GALLERY -->
+<section class="hostel-images">
   <div class="hostel-image-item">
-    <img src="assets/images/hostel.jpg" alt="Hostel Main Building">
+    <img src="assets/images/hostel.jpg" alt="Hostel Building">
   </div>
   <div class="hostel-image-item">
     <img src="assets/images/Hostelroom.jpg" alt="Hostel Room">
   </div>
   <div class="hostel-image-item">
-    <img src="assets/images/hostelcommonarea.jpg" alt="Hostel Common Area">
+    <img src="assets/images/hostelcommonarea.jpg" alt="Common Area">
   </div>
-</div>
+</section>
 
-<!-- Menu options (Rooms, Rent, Complaints, Notices) inserted by js/dashboard.js -->
-<div class="grid" id="menu"></div>
-
+<!-- MENU (Injected by JS) -->
+<section class="grid" id="menu"></section>
 
 <script src="js/auth.js"></script>
+<script>
+  // Protect page
+  requireAuth();
+
+  // Prevent browser back navigation
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    window.location.replace("dashboard.html");
+  };
+</script>
+
 <script src="js/dashboard.js"></script>
 </body>
 </html>
