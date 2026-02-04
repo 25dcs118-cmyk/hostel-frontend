@@ -1,16 +1,17 @@
 import express from "express";
 import Room from "../models/Room.js";
-import auth from "../middleware/authMiddleware.js";
-import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", auth, async (req, res) => {
-  res.json(await Room.find());
+router.get("/", async(req,res)=>{
+  const data = await Room.find();
+  res.json(data);
 });
 
-router.post("/", auth, isAdmin, async (req, res) => {
-  res.json(await Room.create(req.body));
+router.post("/", async(req,res)=>{
+  const room = new Room(req.body);
+  await room.save();
+  res.json(room);
 });
 
 export default router;

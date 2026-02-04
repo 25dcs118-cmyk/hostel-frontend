@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
-const roomSchema = new mongoose.Schema({
+const RoomSchema = new mongoose.Schema({
   number: String,
   capacity: Number,
-  booked: { type: Boolean, default: false }
+  createdAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model("Room", roomSchema);
+export default mongoose.model("Room", RoomSchema);
