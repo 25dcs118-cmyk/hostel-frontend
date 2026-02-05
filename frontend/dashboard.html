@@ -1,84 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Hostel ERP Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<nav>
-  <div class="nav-left">
-    <img src="assets/images/logo.png" class="nav-logo">
-    <h2 id="title">Dashboard</h2>
-  </div>
+<div class="app-layout">
 
-  <div class="navbar-hostel-info">
-    <p><strong>Premium Boys Hostel</strong> – Sector 5, Near Metro Station</p>
-  </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <img src="assets/images/logo.png" class="sidebar-logo">
+      <h2>Premium Hostel</h2>
+    </div>
 
-  <button onclick="logout()">Logout</button>
-</nav>
+    <nav class="sidebar-menu">
+      <a href="dashboard.html" class="active">🏠 Dashboard</a>
+      <a href="rooms.html">🛏 Rooms</a>
+      <a href="rent.html">💰 Rent</a>
+      <a href="complaints.html">⚠ Complaints</a>
+      <a href="notices.html">📢 Notices</a>
+      <a href="profile.html">👤 Profile</a>
+    </nav>
+  </aside>
 
-<!-- DASHBOARD CONTENT -->
-<section class="grid">
+  <!-- MAIN -->
+  <main class="main">
 
-  <!-- HOSTEL INFO -->
-  <div class="card">
-    <h3>🏢 Hostel Information</h3>
-    <p><strong>Name:</strong> Premium Boys Hostel</p>
-    <p><strong>Location:</strong> Sector 5, Near Metro Station</p>
-    <p><strong>Facilities:</strong> WiFi, Laundry, Mess, AC Rooms</p>
-    <p><strong>Contact:</strong> +91-98765-43210</p>
-  </div>
+    <header class="topbar">
+      <div>
+        <h1>Hostel Management Dashboard</h1>
+        <p class="subtext">Monitor rooms, tenants and activities</p>
+      </div>
+      <button class="btn-secondary" onclick="logout()">Logout</button>
+    </header>
 
-  <!-- PROFILE -->
-  <div class="card">
-    <h3>👤 My Profile</h3>
-    <p>View and update your profile details.</p>
-    <button class="btn-secondary" onclick="location.href='profile.html'">
-      View Profile
-    </button>
-  </div>
+    <!-- STATS -->
+    <section class="stats">
+      <div class="stat-card">
+        <span>🏠</span>
+        <h3 id="roomCount">0</h3>
+        <p>Rooms</p>
+      </div>
 
-</section>
+      <div class="stat-card">
+        <span>👨‍🎓</span>
+        <h3 id="tenantCount">0</h3>
+        <p>Tenants</p>
+      </div>
 
+      <div class="stat-card">
+        <span>💰</span>
+        <h3 id="rentCount">₹0</h3>
+        <p>Rent Collected</p>
+      </div>
 
-<!-- MENU (Injected by JS) -->
-<section class="grid" id="menu"></section>
+      <div class="stat-card">
+        <span>⚠</span>
+        <h3 id="complaintCount">0</h3>
+        <p>Complaints</p>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="gallery-section">
+      <h2>Hostel Gallery</h2>
+
+      <div class="gallery-grid">
+        <div class="gallery-card">
+          <img src="assets/images/hostel.jpg">
+          <p>Main Building</p>
+        </div>
+
+        <div class="gallery-card">
+          <img src="assets/images/Hostelroom.jpg">
+          <p>Rooms</p>
+        </div>
+
+        <div class="gallery-card">
+          <img src="assets/images/hostelcommonarea.jpg">
+          <p>Common Area</p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
 
 <script src="js/auth.js"></script>
-<script>
-  // Protect page
-  requireAuth();
-
-  // Prevent browser back navigation
-  history.pushState(null, null, location.href);
-  window.onpopstate = function () {
-    window.location.replace("dashboard.html");
-  };
-</script>
-
+<script>requireAuth();</script>
 <script src="js/dashboard.js"></script>
-
-<!-- GALLERY -->
-<section class="gallery">
-
-  <div class="gallery-card">
-    <img src="assets/images/hostel.jpg" alt="Hostel Building">
-  </div>
-
-  <div class="gallery-card">
-    <img src="assets/images/Hostelroom.jpg" alt="Hostel Room">
-  </div>
-
-  <div class="gallery-card">
-    <img src="assets/images/hostelcommonarea.jpg" alt="Common Area">
-  </div>
-
-</section>
 
 </body>
 </html>

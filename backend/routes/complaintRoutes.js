@@ -1,34 +1,38 @@
 import express from "express";
 import Complaint from "../models/Complaint.js";
-import auth from "../middleware/authMiddleware.js";
-import { isAdmin } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-// Create complaint (tenant)
-router.post("/", auth, async (req, res) => {
-  const complaint = await Complaint.create({
-    subject: req.body.subject,
-    description: req.body.description,
-    status: "Pending"
-  });
-  res.json(complaint);
+/* ADD COMPLAINT */
+router.post("/", async (req, res) => {
+  try {
+    const { subject, description } = req.body;
+
+    if (!subject || !description) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    const complaint = await Complaint.create({
+      subject,
+      description
+    });
+
+    res.status(201).json(complaint);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
-// Get all complaints (admin)
-router.get("/", auth, isAdmin, async (req, res) => {
-  const complaints = await Complaint.find().sort({ createdAt: -1 });
-  res.json(complaints);
-});
-
-// Update complaint status (admin)
-router.put("/:id", auth, isAdmin, async (req, res) => {
-  const updated = await Complaint.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
-  res.json(updated);
+/* GET ALL COMPLAINTS */
+router.get("/", async (req, res) => {
+  try {
+    const complaints = await Complaint.find().sort({ createdAt: -1 });
+    res.json(complaints);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
 export default router;

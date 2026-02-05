@@ -1,48 +1,86 @@
-// ======================
-// DASHBOARD LOGIC
-// ======================
+const API = "http://localhost:5000/api";
 
-// Auth guard (extra safety)
-const session = JSON.parse(localStorage.getItem("session"));
-if (!session) {
-  window.location.replace("index.html");
+/* =========================
+   AUTH CHECK
+========================= */
+function getSession(){
+  const raw = localStorage.getItem("session");
+
+  if(!raw){
+    window.location.href="index.html";
+    return null;
+  }
+
+  try{
+    const session = JSON.parse(raw);
+
+    if(!session.username || !session.role){
+      throw "Invalid session";
+    }
+
+    return session;
+
+  }catch(err){
+    localStorage.removeItem("session");
+    window.location.href="index.html";
+    return null;
+  }
 }
 
-// Set dashboard title
-const titleEl = document.getElementById("title");
-titleEl.innerText = session.role.toUpperCase() + " DASHBOARD";
+const session = getSession();
+if(!session) throw "No session";
 
-// Menu configuration
-const menus = {
-  admin: [
-    { name: "Rooms", link: "rooms.html", icon: "🏠" },
-    { name: "Rent", link: "rent.html", icon: "💰" },
-    { name: "Complaints", link: "complaints.html", icon: "🛠️" },
-    { name: "Notices", link: "notices.html", icon: "📢" }
-  ],
-  tenant: [
-    { name: "Rooms", link: "rooms.html", icon: "🏠" },
-    { name: "Rent", link: "rent.html", icon: "💰" },
-    { name: "Complaints", link: "complaints.html", icon: "🛠️" },
-    { name: "Notices", link: "notices.html", icon: "📢" }
-  ]
-};
 
-// Render menu
-const menuContainer = document.getElementById("menu");
-menus[session.role].forEach(item => {
-  const card = document.createElement("a");
-  card.className = "box";
-  card.href = item.link;
-  card.innerHTML = `
-    <div style="font-size:32px">${item.icon}</div>
-    <div style="margin-top:10px;font-weight:600">${item.name}</div>
-  `;
-  menuContainer.appendChild(card);
-});
+/* =========================
+   LOAD DASHBOARD STATS
+========================= */
+async function loadStats(){
 
-// Prevent browser back navigation
-history.pushState(null, null, location.href);
-window.onpopstate = function () {
-  window.location.replace("dashboard.html");
-};
+  try{
+
+    /* ROOMS */
+    const roomRes = await fetch(`${API}/rooms`);
+    const rooms = await roomRes.json();
+    document.getElementById("roomCount").innerText = rooms.length;
+
+    /* COMPLAINTS */
+    const compRes = await fetch(`${API}/complaints`);
+    const complaints = await compRes.json();
+    document.getElementById("complaintCount").innerText = complaints.length;
+
+    /* RENT */
+    const rentRes = await fetch(`${API}/rent`);
+    const rents = await rentRes.json();
+
+    let totalRent = 0;
+    rents.forEach(r=> totalRent += Number(r.amount));
+
+    document.getElementById("rentCount").innerText = "₹" + totalRent;
+
+    /* TENANTS */
+    const userRes = await fetch(`${API}/users`);
+    const users = await userRes.json();
+
+    const tenants = users.filter(u => u.role === "tenant");
+    document.getElementById("tenantCount").innerText = tenants.length;
+
+  }catch(err){
+    console.error("Dashboard Stats Error:",err);
+  }
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+function logout(){
+  localStorage.removeItem("session");
+  localStorage.removeItem("token");
+  window.location.href="index.html";
+}
+
+
+/* =========================
+   AUTO LOAD
+========================= */
+document.addEventListener("DOMContentLoaded", loadStats);

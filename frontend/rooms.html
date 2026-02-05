@@ -1,92 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Rooms</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Rooms Management</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+body{
+  font-family: 'Segoe UI',sans-serif;
+  background:#f4f7fb;
+  margin:0;
+}
+
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 25px;
+  background:#0f172a;
+  color:white;
+}
+
+.nav-left h2{
+  margin:0;
+}
+
+.navbar-hostel-info{
+  font-size:14px;
+  opacity:0.8;
+}
+
+.btn-secondary{
+  padding:8px 15px;
+  border:none;
+  background:#3b82f6;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:25px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:white;
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0px 6px 18px rgba(0,0,0,0.08);
+}
+
+.card h3{
+  margin-top:0;
+  margin-bottom:15px;
+}
+
+input,select{
+  width:100%;
+  padding:10px;
+  margin-bottom:12px;
+  border-radius:6px;
+  border:1px solid #ddd;
+}
+
+button{
+  padding:10px;
+  width:100%;
+  border:none;
+  background:#2563eb;
+  color:white;
+  border-radius:6px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#1d4ed8;
+}
+
+ul{
+  list-style:none;
+  padding:0;
+}
+
+.room-item{
+  padding:10px;
+  margin-bottom:8px;
+  border-radius:6px;
+  background:#f1f5f9;
+  font-size:14px;
+}
+</style>
+
 </head>
 
 <body>
 
 <nav>
   <div class="nav-left">
-    <h2>Rooms</h2>
+    <h2>🏠 Rooms Management</h2>
   </div>
 
   <div class="navbar-hostel-info">
-    <p><strong>Premium Boys Hostel</strong></p>
+    Premium Boys Hostel System
   </div>
 
-  <button class="btn-secondary" onclick="goDashboard()">Back</button>
+  <button class="btn-secondary" onclick="goDashboard()">⬅ Dashboard</button>
 </nav>
+
+<div class="container">
 
 <section class="grid">
 
-  <!-- ADMIN: ADD ROOM -->
+  <!-- ADMIN ADD ROOM -->
   <div class="card" id="adminRoomForm">
-    <h3>➕ Add Room</h3>
+    <h3>➕ Add New Room</h3>
     <input id="roomNumber" placeholder="Room Number">
     <input id="capacity" placeholder="Capacity">
     <button onclick="addRoom()">Add Room</button>
   </div>
 
-  <!-- ROOMS LIST -->
+  <!-- ROOM LIST -->
   <div class="card">
-    <h3>🏠 Available Rooms</h3>
+    <h3>📋 Available Rooms</h3>
     <ul id="roomsList"></ul>
   </div>
 
-  <!-- TENANT: BOOK ROOM -->
+  <!-- TENANT BOOK -->
   <div class="card" id="bookingCard">
     <h3>📌 Book Room</h3>
     <select id="selectRoom"></select>
-    <button onclick="bookRoom()">Book</button>
+    <button onclick="bookRoom()">Confirm Booking</button>
   </div>
 
 </section>
+
+</div>
 
 <script src="js/auth.js"></script>
 <script src="js/api.js"></script>
 
 <script>
-  requireAuth();
-  const session = JSON.parse(localStorage.getItem("session"));
+requireAuth();
+const session = JSON.parse(localStorage.getItem("session"));
 
-  function goDashboard() {
-    window.location.replace("dashboard.html");
-  }
+function goDashboard(){
+  window.location.replace("dashboard.html");
+}
 
-  history.pushState(null, null, location.href);
-  window.onpopstate = () => goDashboard();
+history.pushState(null,null,location.href);
+window.onpopstate = () => goDashboard();
 
-  // Role-based UI
-  if (session.role !== "admin") {
-    document.getElementById("adminRoomForm").style.display = "none";
-  }
+if(session.role !== "admin"){
+  document.getElementById("adminRoomForm").style.display="none";
+}
 
-  async function loadRooms() {
-    const rooms = await getAll("rooms");
-    const list = document.getElementById("roomsList");
-    const select = document.getElementById("selectRoom");
+async function loadRooms(){
+  const rooms = await getAll("rooms");
+  const list = document.getElementById("roomsList");
+  const select = document.getElementById("selectRoom");
 
-    list.innerHTML = "";
-    select.innerHTML = "";
+  list.innerHTML="";
+  select.innerHTML="";
 
-    rooms.forEach(r => {
-      const li = document.createElement("li");
-      li.innerText = `Room ${r.number} | Capacity: ${r.capacity} | ${r.booked ? "Booked" : "Available"}`;
-      list.appendChild(li);
+  rooms.forEach(r=>{
+    const li=document.createElement("li");
+    li.className="room-item";
+    li.innerText=`Room ${r.number} | Capacity ${r.capacity} | ${r.booked?"Booked":"Available"}`;
+    list.appendChild(li);
 
-      if (!r.booked) {
-        const opt = document.createElement("option");
-        opt.value = r._id;
-        opt.innerText = `Room ${r.number}`;
-        select.appendChild(opt);
-      }
-    });
-  }
+    if(!r.booked){
+      const opt=document.createElement("option");
+      opt.value=r._id;
+      opt.innerText=`Room ${r.number}`;
+      select.appendChild(opt);
+    }
+  });
+}
 
-  window.onload = loadRooms;
+window.onload=loadRooms;
 </script>
 
 </body>

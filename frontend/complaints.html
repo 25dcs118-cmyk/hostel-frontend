@@ -1,72 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Complaints</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Complaints | Hostel ERP</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<nav>
-  <h2>Complaints</h2>
-  <button class="btn-secondary" onclick="goDashboard()">Back</button>
+<nav class="navbar">
+  <div class="nav-left">
+    <h2>Hostel Complaints</h2>
+  </div>
+  <div class="nav-right">
+    <button class="btn-secondary" onclick="goDashboard()">Dashboard</button>
+  </div>
 </nav>
 
-<section class="grid">
+<main class="page-container">
 
-  <!-- TENANT: ADD COMPLAINT -->
-  <div class="card" id="tenantComplaintForm">
-    <h3>📝 Raise Complaint</h3>
-    <input id="subject" placeholder="Subject">
-    <textarea id="description" placeholder="Describe your issue..."></textarea>
-    <button onclick="addComplaint()">Submit</button>
-  </div>
+  <!-- ADD COMPLAINT -->
+  <section class="card complaint-form" id="tenantComplaintForm">
+    <h3>Raise a Complaint</h3>
 
-  <!-- COMPLAINTS LIST -->
-  <div class="card">
-    <h3>📋 Complaints</h3>
-    <ul id="complaintList"></ul>
-  </div>
+    <div class="form-group">
+      <label>Subject</label>
+      <input id="subject" placeholder="Enter complaint subject">
+    </div>
 
-</section>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="text" placeholder="Describe the issue clearly"></textarea>
+    </div>
+
+    <button class="btn-primary" onclick="addComplaint()">Submit Complaint</button>
+  </section>
+
+  <!-- COMPLAINT LIST -->
+  <section class="card">
+    <h3>All Complaints</h3>
+    <div id="complaintList" class="complaint-container"></div>
+  </section>
+
+</main>
 
 <script src="js/auth.js"></script>
-<script src="js/api.js"></script>
+<script src="js/complaints.js"></script>
 
 <script>
-  requireAuth();
-  const session = JSON.parse(localStorage.getItem("session"));
+function goDashboard(){
+  window.location.href="dashboard.html";
+}
 
-  function goDashboard() {
-    window.location.replace("dashboard.html");
-  }
+requireAuth();
 
-  history.pushState(null, null, location.href);
-  window.onpopstate = () => goDashboard();
+const session = JSON.parse(localStorage.getItem("session"));
 
-  // Role-based UI
-  if (session.role !== "tenant") {
-    document.getElementById("tenantComplaintForm").style.display = "none";
-  }
-
-  async function loadComplaints() {
-    const complaints = await getAll("complaints");
-    const list = document.getElementById("complaintList");
-    list.innerHTML = "";
-
-    complaints.forEach(c => {
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <strong>${c.subject}</strong><br>
-        ${c.description}<br>
-        <small>Status: ${c.status || "Pending"}</small>
-      `;
-      list.appendChild(li);
-    });
-  }
-
-  window.onload = loadComplaints;
+if(session && session.role !== "tenant"){
+  document.getElementById("tenantComplaintForm").style.display="none";
+}
 </script>
 
 </body>

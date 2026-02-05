@@ -1,57 +1,72 @@
 // ======================
-// AUTHENTICATION LOGIC
+// AUTH SYSTEM (IMPROVISED)
 // ======================
 
-function login() {
-  const u = document.getElementById("username").value.trim();
-  const p = document.getElementById("password").value.trim();
-  const r = document.getElementById("role").value;
+/* LOGIN */
+function login(){
 
-  // Demo users (temporary – will move to backend later)
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const role = document.getElementById("role").value;
+
   const users = {
-    admin: { password: "admin123", role: "admin" },
-    tenant: { password: "tenant123", role: "tenant" }
+    admin:{password:"admin123",role:"admin"},
+    tenant:{password:"tenant123",role:"tenant"}
   };
 
-  if (!users[u]) {
-    alert("User does not exist");
+  if(!users[username]){
+    alert("User not found");
     return;
   }
 
-  if (users[u].password !== p || users[u].role !== r) {
-    alert("Invalid credentials or role mismatch");
+  if(users[username].password !== password){
+    alert("Wrong password");
     return;
   }
 
-  // Store session
-  const session = {
-    username: u,
-    role: r,
-    loginTime: new Date().toISOString()
+  if(users[username].role !== role){
+    alert("Role mismatch");
+    return;
+  }
+
+  const session={
+    username,
+    role,
+    loginTime:Date.now()
   };
 
-  localStorage.setItem("session", JSON.stringify(session));
+  localStorage.setItem("session",JSON.stringify(session));
 
-  // Prevent back navigation to login
-  window.location.replace("dashboard.html");
+  setTimeout(()=>{
+    window.location.href="dashboard.html";
+  },100);
 }
 
-// ======================
-// LOGOUT
-// ======================
-
-function logout() {
+/* LOGOUT */
+function logout(){
   localStorage.removeItem("session");
-  window.location.replace("index.html");
+  window.location.href="index.html";
 }
 
-// ======================
-// AUTH GUARD (use on protected pages)
-// ======================
+/* AUTH GUARD */
+function requireAuth(){
 
-function requireAuth() {
-  const session = localStorage.getItem("session");
-  if (!session) {
-    window.location.replace("index.html");
+  const raw = localStorage.getItem("session");
+
+  if(!raw){
+    window.location.href="index.html";
+    return;
+  }
+
+  try{
+    const session = JSON.parse(raw);
+
+    if(!session.username || !session.role){
+      throw "Invalid session";
+    }
+
+  }catch(err){
+    localStorage.removeItem("session");
+    window.location.href="index.html";
   }
 }

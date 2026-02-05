@@ -1,9 +1,30 @@
 import mongoose from "mongoose";
 
-const RoomSchema = new mongoose.Schema({
-  number: String,
-  capacity: Number,
-  createdAt: { type: Date, default: Date.now }
-});
+const roomSchema = new mongoose.Schema(
+  {
+    number: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true
+    },
 
-export default mongoose.model("Room", RoomSchema);
+    capacity: {
+      type: Number,
+      required: true,
+      min: 1
+    },
+
+    status: {
+      type: String,
+      enum: ["available", "occupied"],
+      default: "available"
+    }
+  },
+  {
+    timestamps: true
+  }
+);
+
+export default mongoose.model("Room", roomSchema);
+  
