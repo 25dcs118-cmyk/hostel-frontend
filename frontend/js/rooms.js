@@ -1,83 +1,100 @@
-const API = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
+const API = "http://localhost:5000/api/rooms";
 
-if (!token) {
-  alert("Session expired. Please login again.");
-  window.location.href = "index.html";
-}
-
+const addForm = document.getElementById("addRoomForm");
 const roomList = document.getElementById("roomList");
+const roomSelect = document.getElementById("roomSelect");
 
+/* LOAD ROOMS */
 async function loadRooms() {
   try {
-    roomList.innerHTML = `<div class="loader"></div>`;
+    const res = await fetch(API);
+    const data = await res.json();
 
-    const res = await fetch(`${API}/rooms`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    if (!data.success) throw new Error();
+
+    roomList.innerHTML = "";
+    roomSelect.innerHTML = "";
+
+    data.data.forEach(r => {
+
+      const li = document.createElement("li");
+      li.textContent =
+        `Room ${r.number} | Capacity ${r.capacity} | ${r.status}`;
+      roomList.appendChild(li);
+
+      if (r.status === "available") {
+        const opt = document.createElement("option");
+        opt.value = r._id;
+        opt.textContent = "Room " + r.number;
+        roomSelect.appendChild(opt);
       }
+
     });
 
-    if (!res.ok) throw new Error("Failed to fetch rooms");
-
-    const rooms = await res.json();
-
-    if (!rooms.length) {
-      roomList.innerHTML = `<p class="empty">No rooms available</p>`;
-      return;
-    }
-
-    roomList.innerHTML = rooms.map(r => `
-      <div class="room-card">
-        <h3>Room ${r.number}</h3>
-        <p><strong>Capacity:</strong> ${r.capacity}</p>
-        <p><strong>Status:</strong> 
-          <span class="${r.isOccupied ? 'badge red' : 'badge green'}">
-            ${r.isOccupied ? "Occupied" : "Available"}
-          </span>
-        </p>
-      </div>
-    `).join("");
-
-  } catch (err) {
-    console.error(err);
-    roomList.innerHTML = `<p class="error">Failed to load rooms</p>`;
+  } catch {
+    alert("Failed to fetch data");
   }
 }
 
-async function addRoom() {
-  const number = document.getElementById("roomNumber").value.trim();
-  const capacity = document.getElementById("capacity").value.trim();
+/* ADD ROOM */
+addForm.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const number = document.getElementById("number").value.trim();
+  const capacity = parseInt(
+    document.getElementById("capacity").value
+  );
 
   if (!number || !capacity) {
-    alert("Please fill all fields");
+    alert("Enter valid data");
     return;
   }
 
   try {
-    const res = await fetch(`${API}/rooms`, {
+    const res = await fetch(API, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         number,
-        capacity: Number(capacity)
+        capacity
       })
     });
 
-    if (!res.ok) throw new Error("Failed to create room");
+    const data = await res.json();
 
-    document.getElementById("roomNumber").value = "";
-    document.getElementById("capacity").value = "";
+    if (!data.success) {
+      alert(data.message);
+      return;
+    }
 
+    addForm.reset();
     loadRooms();
 
-  } catch (err) {
-    console.error(err);
-    alert("Server error");
+  } catch {
+    alert("Failed to create");
   }
-}
+});
 
-document.addEventListener("DOMContentLoaded", loadRooms);
+/* BOOK ROOM */
+document.getElementById("bookBtn")
+.addEventListener("click", async () => {
+
+  const id = roomSelect.value;
+  if (!id) return alert("Select room");
+
+  await fetch(API + "/" + id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      status: "occupied"
+    })
+  });
+
+  loadRooms();
+});
+
+loadRooms();
